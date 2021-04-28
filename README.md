@@ -1,6 +1,6 @@
 # Final Summative 
 
-### Project Research Implementation and Presentation Assignment
+### Project-Research, Implementation and Presentation Assignment
 
 #### Cohort 2 Group 1 Members
 
