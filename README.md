@@ -1,8 +1,8 @@
 # Final Summative 
-## Cohort 2 Group 1
+
 ### Project Research Implementation and Presentation Assignment
 
-#### Team Members
+#### Cohort 2 Group 1 Members
 
 1. Joyce Njeri
 2. Ayo Lerin
