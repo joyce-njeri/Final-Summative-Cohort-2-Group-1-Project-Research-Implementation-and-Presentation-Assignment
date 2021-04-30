@@ -1,0 +1,288 @@
+\documentclass[a4paper]{article}
+\usepackage[acronym]{glossaries}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=25mm]{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\pagenumbering{gobble}
+\usepackage{verbatim}
+\immediate\write18{texcount -tex -sum  \jobname.tex > \jobname.wordcount.tex}
+
+\pagenumbering{arabic}
+
+\setlength{\arrayrulewidth}{0.2mm}
+
+\newacronym{ada}{AdaBoost}{Adaptive Boosting}
+\newacronym{ann}{ANN}{Artificial Neural Network}
+\newacronym{cv}{CV}{Cross-validation}
+\newacronym{pca}{PCA}{Principal Component Analysis}
+\newacronym{rfe}{RFE}{Recursive Feature Elimination}
+\newacronym{roc}{ROC}{Receiver Operator Characteristic}
+\newacronym{smote}{SMOTE}{Synthetic Minority Oversampling Technique}
+\newacronym{xgb}{XGBoost}{eXtreme Gradient Boosting}
+
+\newacronym{auc}{AUC}{Area Under the Curve}
+\newacronym{dc}{DC}{Dummy Classifier}
+\newacronym{dt}{DT}{Decision Tree}
+\newacronym{fn}{FN}{False Negatives}
+\newacronym{fp}{FP}{False Positives}
+\newacronym{fpr}{FPR}{False Positive Rate}
+\newacronym{rf}{RF}{Random Forest}
+\newacronym{tn}{TN}{True Negatives}
+\newacronym{tp}{TP}{True Positives}
+\newacronym{tpr}{TPR}{True Positive Rate}
+
+
+\makeglossaries
+
+\begin{document}
+
+\title{\textbf{Loan Default Prediction Using Supervised Machine Learning Algorithms}}
+\author{\textbf{Cohort 2 Group 1}\vspace{0.2cm} \\Joyce Njeri, Christine Wasike, Alice Fatmata,\\
+        Ayo Oluwapamilerin, Gilbert Sibomana}
+\date{\today} 
+\maketitle
+
+\begin{abstract}
+    African financial deepening is beset by a high rate of loan defaults which encourages banks to hold liquid assets instead of lending. Financial institutions have large amounts of data on their borrowers, which can be used to predict the probability of borrowers defaulting their loan or not. With respect to recent development in the field of machine learning, there has been an interest in investigating if machine learning techniques can perform better quantification of the risk. The purpose of this paper is to analyze individual loan defaults in Africa and examine which method from a chosen set of machine learning techniques exhibits the best performance in default prediction with regards to chosen model evaluation parameters. The investigated techniques were Logistic Regression, Decision Tree, Random Forest, Gaussian Naive Bayes, \gls{xgb}, and Gradient Boosting Classifier among others. The study recommended the use of the XGBoost Classifier model in conjunction with a supervised machine learning approach in loan default prediction in financial institutions.
+    
+    \vspace{0.2cm}
+    
+    \newcommand{\keyword}{\textit{Keywords:}}
+
+    \begin{keyword}
+    Loan defaults; \sep loan default prediction; \sep Nigeria; \sep financial development; \sep Africa;
+    %% keywords here, in the form: keyword \sep keyword
+    
+    %% MSC codes here, in the form: \MSC code \sep code
+    %% or \MSC[2008] code \sep code (2000 is the default)
+    
+    \end{keyword}
+
+\end{abstract}
+
+\section{Introduction}
+
+\subsection{Background}
+Sub-Saharan Africa remains one of the most financially under-developed regions in the world [1]. Banks in Africa complain that there is a lack of creditworthy borrowers while at the same time households and firms find finance as a major constraint in their activities. Recent research has shown that banks are deterred from lending by a very high rate of loan defaults [2]. Understanding the determinants of loan default rates in Africa seems, therefore, to hold the key to overcoming the obstacles to financial development in Africa. The main importance of financial institutions, particularly banks, are to safeguard the money kept by their clients and make it accessible when need arises. They also advance loans to their customers [3]. Accurate prediction of default risk in lending has been a crucial theme for banks and other lenders over a century to avoid huge losses that result from wrong decisions [4]. Modern days availability of large datasets and open source data, together with advances in computational and algorithmic data analytics techniques, have renewed interest in this risk prediction tasks. Customers in default means that they did not meet their contractual obligations and potentially might not be able to repay their loans, thus the interest of acquiring a model that can predict defaulted customers [5].
+
+\subsection{Purpose}
+The objective of this assignment is to investigate which method from a chosen set of machine learning techniques performs the best default prediction.  
+
+\subsection{Scope}
+The scope of this paper is to implement and investigate how different supervised binary classification methods impact default prediction. The model evaluation techniques used in this project are limited to precision, F-score and accuracy score. The classifiers that will be implemented and studied are: Logistic Regression, Decision Tree, Random Forest, Gaussian Naive Bayes, XGBoost, and Gradient Boosting Classifier among others. The project will be performed using internal data of SuperLender customers, a local digital lending company in Nigeria. The results presented in this thesis may therefore be biased towards the profile of SuperLender clients, specifically their location and behavioral factors.
+
+\section{Methodology}
+\subsection{Formulation of a Binary Classification Problem}
+
+Binary classification refers to the case when the input to a model is classified to belong to one of two chosen categories. In this project, customers belong either to the non-default category or to the default category. The categories can therefore be modeled as a binary random variable: \[\textit{Y}\in \{ 0, 1\}\], where 0 is defined as non-default, while 1 corresponds to default. The random variable \textit{Y}\textsubscript{i} is the target variable and will take the value of \textit{y}\textsubscript{i}, where it corresponds to the \textit{i}th observation in the data set. The rest of the information about the customers, such as loan amounts and payments in arrears can be modeled as the input variables. These variables are both real numbers and categories and are often referred to as \textit{features} or \textit{predictors}. With this setup, it makes it possible to fit a supervised machine learning model that relates the response to the features, with the objective of accurately predicting the response for future observations [6]. The main characteristic of supervised machine learning is that the target variable is \textit{known} and therefore an inference between the target variable and the predictors can be made. 
+
+\subsection{Feature Selection Methods}
+In the data given by SuperLender, features are presented as both continuous and categorical variables. Thus, in order to understand how features correlate with each other and the response variable, implemented methods for feature selection should process both continuous and categorical variables simultaneously. That is why we used the following methods: Feature selection with Kendall’s Tau Coefficient Analysis and \gls{rfe}.
+
+\subsubsection{Correlation Analysis}
+The Kendall’s Tau rank correlation coefficient measures the ordinal association between two measured variables, thus, it is a univariate method of correlation analysis [7]. The Kendall’s Tau rank correlation is a non-parametric test which means that it does not rely on any assumptions of distributions between the analyzed variables [8]. In a statistical hypothesis test, the null hypothesis implies an independence of \textit{X} and \textit{Y} and for large data sets, the distribution of the test can be approximated by a normal distribution with mean zero and variance [9].
+
+\subsubsection{Recursive Feature Elimination}
+RFE is a multivariate method of variable selection [10], which performs a backward selection of predictors [11]. The algorithm starts with computing an importance score for each predictor in the whole data set. Let \textit{S} be a sequence of the number of variables to include in the model. For each iteration, the number of \textit{S}\textsubscript{i} predictors which have been top-ranked are retained in the model [12]. Further, the importance scores are computed again and the performance is reassessed. The tuning parameter for RFE is the subset size and the subset of \textit{S}\textsubscript{i} predictors with the highest importance score which is then used for fitting the final model. Thus, the performance criteria is optimized by the subset size with regards to the performed importance ranking.
+
+\subsection{Handling Sample Imbalance}
+In the data provided, a heavy class imbalance exhibits. An imbalanced data set contains observations where the classes of the response variable are not approximately equally represented. The imbalance causes a problem when training machine learning algorithms since one of the categories is almost absent, hence poor predictions of new observations of the minority class are expected. In order to increase the performance of the algorithms there are different sampling techniques that can be used. One of them is called \gls{smote}. SMOTE is a sampling algorithm that creates synthetic data points for the minority class rather than sampling existing observations with replacement [14]. The method is applied on the continuous parameters for each sample in the minority class.
+
+\subsection{Model Evaluation Techniques}
+\subsubsection{Confusion Matrix}
+One common way to evaluate the performance of a model with binary responses is to use a confusion matrix. The observed cases of default are defined as positives and non-default as negatives [13]. From a confusion matrix there are certain metrics that can be taken into consideration. The most common metric is accuracy which is defined as the fraction of the total number of correct classifications and the total number of observations. In terms of business sense, the aim is to achieve a trade-off between losing money on non-performing customers and opportunity cost caused by declining of a potentially performing customer. Thus, there is a high relevance to analyze how sensitivity and precision are affected by various methods applied, as sensitivity is a measure of how many defaulted customers are captured by the model, while precision relates to the potential opportunity cost. Since sensitivity and precision are of equal importance in this project, a trade-off between these metrics is considered. The F-score is the weighted harmonic average of precision and sensitivity [14].
+
+\subsubsection{Area Under the Receiver Operator Characteristic Curve}
+Another way to evaluate results from the models is to analyze the \gls{roc} curve and its \gls{auc}. The ROC curve uses the false positive fraction in order to describe the trade-offs between sensitivity and (1-specificity). A ROC curve can also be summarized by AUC score, which represents an index for ROC curve [6].
+
+\subsection{Cross-validation}
+In order to prevent using the same information in the training phase and the evaluation phase of models, which makes the results less reliable, the data is divided into training set, validation set and test set [15]. The training set and validation set are used for finding the best model and the test set is only used for calculating the prediction performance of the best model. The test data will therefore be held out until the best model is obtained [14]. Choosing the best model from a set of models can be done by a method called K-fold \gls{cv}.
+
+\section{Data Preprocessing and Variable Selection}
+The design adopts both quantitative and qualitative approaches or methods in a single study [16]. 
+
+\subsection{Data Description}
+The data that was used for this study was obtained from SuperLender, a local digital lending company in Nigeria. A random sample of 18,183 loan applicants whose loans had been approved by 18 banks over the period 2016 - 2017 was obtained. Information derived from these variables were what type of accounts a customer possessed and how these particular accounts behaved over a certain time span. The time span of data was merged with a default flag indicating if the customer was in default or not.
+
+\subsection{Data Preprocessing}
+The first step was to filter the data by cleaning it through python’s library pandas. Missing values were treated by doing a complete case analysis. The data was then coded for easy analysis. The coding involved identification of non-performing loans or a loan default with a value ‘0’ for ‘Bad’, and a performing loan with a value ‘1’ for ‘Good’. Equivalent number of dummy variables were created for the purposes of coding independent variables. The clean data was then used for analysis and generation of descriptive statistics and also fit the models.
+
+\subsection{Variable Selection by Correlation Analysis}
+In order to reduce the number of variables and treat multicollinearity, correlation analysis for the features against response and features against features was performed. Some variables have strong correlation, which should be treated. The next step in this case would be to choose a threshold for correlation allowed in the model. The threshold was chosen to 0.7, because pairwise correlation higher than 0.7 leads to unstable estimates and multicollinearity [17]. After the threshold was decided, the variable which correlates the most with the response variable was kept.
+
+\subsection{Variable Selection by RFE}
+For the sake of getting a multivariate based variable selection, RFE was implemented. The variable selection by RFE was performed only on the behavioral variables with a Random Forest classifier with F-score as a scoring evaluation.
+
+
+\section{Results}
+
+\subsection{Performance of the Methods}
+As mentioned in section 2.3, performance of the methods is evaluated by sensitivity, precision, F-score and ROC-score with the F-score as the primary metric. 
+
+In Table 4.1, it can be seen that the highest obtained F-score was for XGBoost. With regards to precision, sensitivity and accuracy, LR generated the best precision, while XGBoost had the best sensitivity, roc-score and accuracy.
+
+\vspace{0.3cm}
+
+\begin{center}
+\captionof{Table}{ 4.1: Performance of Methods with regards to chosen performance measurements} \label{tab:title} 
+\end{center}
+
+\begin{flushleft}
+
+\begin{tabular}{|p{1.6cm}|p{1.5cm}|p{4.5cm}|p{1.3cm}|p{1.5cm}|p{1.2cm}|p{1.0cm}|p{1.3cm}|} \hline
+%%%%%% Title row starts here
+Variable Selection& Number of -Features & Model & Precision & Sensitivity & F-score & ROC-score& Accuracy\\ \hline
+
+
+%%%%%% Row Foo starts here
+Correlation Analysis &
+\begin{tabular}{l} 30 \\[1.0ex] 30 \\[1.0ex] 30 \\[1.0ex] 30 \\[1.0ex] 30 \\[1.0ex] 30 \\ [1.0ex]
+\end{tabular} &
+
+\begin{tabular}{l} 
+Logistic Regression \\[1.0ex]Decision Tree Classifier\\ [1.0ex]Random Forest Classifier \\[1.0ex] Gaussian Naive Bayes \\[1.0ex] XGBoost Classifier \\[1.0ex] Gradient Boosting Classifier \\ [1.0ex]
+\end{tabular} &
+\begin{tabular}{l} 
+0.985 \\[1.0ex] 0.768 \\[1.0ex] 0.886 \\[1.0ex] 0.890 \\[1.0ex] 0.970 \\[1.0ex] 0.959 \\[1.0ex]
+\end{tabular} &
+\begin{tabular}{l} 
+0.567\\[1.0ex] 0.298\\[1.0ex] 0.376 \\[1.0ex] 0.417 \\[1.0ex] 0.606 \\[1.0ex] 0.534 \\[1.0ex]
+\end{tabular} &
+\begin{tabular}{l} 
+0.888\\[1.0ex] 0.798 \\[1.0ex] 0.858 \\[1.0ex] 0.862 \\[1.0ex] \textbf{0.891} \\[1.0ex] 0.885 \\[1.0ex]
+\end{tabular}  &
+\begin{tabular}{l} 
+0.687\\[1.0ex] 0.561\\[1.0ex] 0.605 \\[1.0ex] 0.626 \\[1.0ex] 0.715 \\[1.0ex] 0.674 \\[1.0ex]
+\end{tabular} &
+\begin{tabular}{l} 
+0.801 \\[1.0ex] 0.691 \\[1.0ex] 0.762 \\[1.0ex] 0.773 \\[1.0ex] 0.810 \\[1.0ex] 0.803 \\[1.0ex]
+\end{tabular} 
+\\ \hline
+%%%%%% Row Bar starts here
+RFE &
+\begin{tabular}{l} 7 \\[1.0ex] 18 \\[1.0ex] 25 \\ 
+\end{tabular}  &
+\begin{tabular}{l} 
+XGBoost Classifier\\[1.0ex] XGBoost Classifier \\[1.0ex] XGBoost Classifier \\
+\end{tabular} &
+\begin{tabular}{l} 
+0.746 \\[1.0ex] 0.735 \\[1.0ex] 0.733 \\ 
+\end{tabular} &
+\begin{tabular}{l} 
+0.705 \\[1.0ex] 0.689 \\[1.0ex] 0.688 \\ 
+\end{tabular} &
+\begin{tabular}{l} 
+0.817 \\[1.0ex] 0.809 \\[1.0ex] 0.807 \\
+\end{tabular} &
+\begin{tabular}{l} 
+0.804 \\[1.0ex] 0.794 \\[1.0ex] 0.792 \\
+\end{tabular} &
+\begin{tabular}{l} 
+0.802 \\[1.0ex] 0.792 \\[1.0ex] 0.789 \\ 
+\end{tabular} 
+\\ \hline
+
+\end{tabular}
+
+\end{flushleft}
+
+\vspace{0.5cm}
+
+Further, in Table 4.1, it is shown that in terms of variable selection methods, correlation analysis with Kendall’s Tau performed better than RFE.
+
+\subsection{Results of the Best Performing Method}
+The results showed that XGBoost Classifier obtained the best result with respect to the chosen model evaluation metric. The model had an accuracy of 0.81. It showed a precision score of 0.97, and accuracy of 0.81. 
+
+\section{Discussion}
+From section 4, it can be seen that the overall best performance was obtained with the machine learning technique XGBoost. In this project, F-score was chosen to be the main indicator of how well the model performed. Thus, if the main performance indicator is to be changed (for example sensitivity, accuracy or precision), another conclusion can be made and further analysis should be performed.
+
+\subsection{Findings}
+Generally, results indicated that tree-based models showed a good performance on average. This is aligned with results from another study, which had the same conclusion when comparing performance between \gls{ann} and tree-based methods [18]. However, in order to test if this relation exhibits generally, more tests should be done and different sets of classifiers should be studied.
+
+\subsubsection{Impact of SMOTE}
+On average, SMOTE did not have a significant positive impact on the F-score, but it had an impact on sensitivity and precision. It can be noted that implementation of SMOTE led to an increase in sensitivity and a decrease in precision.
+
+\subsubsection{Impact of Variable Selection Methods}
+After analyzing the results, the conclusion can be made that correlation analysis with Kendall’s Tau performed better than RFE. That can be partially explained by the nature of variable selection methods. Kendall’s Tau provides a pair-wise analysis of variables, while RFE is a multivariate selection method, which allows the analysis of a set of features simultaneously. In this case, it can be concluded that for this type of project, the pair-wise selection method is more suitable than the multivariate one.
+
+Results indicated also that the number of features included in the model had an impact on the model performance. When using RFE as a variable selection method, there is a direct relation between an decrease in F-score and an increase in the number of variables used in the model. This is shown in Table 4.1. On the other hand, the increase is marginal. Considering the trade-off between the complexity of the model and obtaining the highest F-score, one solution in this case could be to define the highest number of variables allowed in the model or a threshold of the lowest F-score.
+
+
+\subsection{Conclusion}
+The overall results showed that XGBoost executed by correlation analysis with Kendall’s Tau showed the best performance with regards to F-score. It can be concluded that SMOTE did not enhance the performance of the models remarkably in terms of F-score. When SMOTE was applied, sensitivity increased and precision decreased. On average, it was also concluded that the increased number of variables used in the models chosen by RFE had a direct relation with a decrease in F-score. However, this decrease was marginal and that should be taken into consideration. Further, it could be also concluded that tree-based methods showed on average a relatively good performance.
+
+\subsection{Recommendations}
+The potential future work for this project will be a further development of the model by deepening analysis on variables used in the models as well as creating new variables in order to make better predictions. Data available for the scope of this thesis has constraints in terms of geographical breadth of Nigeria’s clients. It should be considered that the behaviour of customers influences the results of this research. It means that the behaviour of clients outside Nigeria may or may not follow the same pattern and therefore one should make additional analysis and obtain a geographically-broader data set if the objective is to have a model unbiased of the geographical location.
+
+Further, it would be interesting to apply other variable selection methods. An alternative for dimensionality reduction could be \gls{pca}. It would also be interesting to make a study concerning what metrics are the most relevant for this type of the problem. In this project the main metric that all evaluations were analyzed by was F-score, because the aim was to achieve a trade-off between the sensitivity and the precision. If a deeper analysis could be performed regarding the most relevant metric for this type of problem, then potentially a weight function could be implemented if one of the metrics explored turned out to be of more importance.
+
+% \section*{Abbreviations}
+% \printglossary[type=\acronymtype,title=Abbreviations]
+\vspace{1.2cm}
+
+\begin{enumerate}
+\begin{flushleft}
+
+\section*{References}
+
+\begin{flushleft}
+\item
+    $\left[ 1 \right]$ P. Honohan and T. Beck, "Making Finance Work for Africa", 2007. Available: https://www.researchgate.net/Making_Finance_Work_for_Africa. [Accessed 24 April 2021].
+\end{flushleft}
+    
+\item
+    $\left[ 2 \right]$ S. Iftikhar, "The impact of financial reforms on bank’s interest margins", Journal of Financial Economic Policy, vol. 8, no. 1, pp. 120-138, 2016. Available: https://www.researchgate.net/deref/http%3A%2F%2Fdx.doi.org%2F10.1108%2FJFEP-05-2015-0028. [Accessed 24 April 2021].
+    
+\item
+    $\left[ 3 \right]$ Divino JA,  Lima  ES, Orrillo  J. Interest  rates and  default in  unsecured loan  markets. Quantitative Finance. 2013;13(12):1925-1934.
+
+\item
+    $\left[ 4 \right]$ Lahsana  A,  Anion  R,  Wah  T.  Credit  scoring  models  using  soft  computing  methods:  A  survey. International Arab Journal of Information Technology. 2010;7(2):115-123.
+    
+\item
+    $\left[ 5 \right]$ L. C. Thomas, E. N. C. Tong, and C. Mues. “Mixture cure models in credit scoring: If and when borrowers default”. In: European Journal of Operational Research 218 (2012), pp. 132–139.
+    
+\item
+    $\left[ 6 \right]$ Trevor Hastie, Jerome Friedman, and Robert Tibshirani. An Introduction to Statistical Learning. eng. Springer Series in Statistics. New York, NY: Springer New York, 2013, p. 26. isbn: 978-1-4614-7138-7.
+
+\item
+    $\left[ 7 \right]$ Xavier Benoit Gust Lucile D’journo. The use of correlation functions in thoracic surgery research. https://www.ncbi.nlm.nih.gov/pmc/articles/ PMC4387406/. [Accessed 24 April 2021].
+    
+\item
+    $\left[ 8 \right]$ Jean D. Gibbons. Nonparametric Measures of Association. Thousand Oaks, California: SAGE Publications, Inc., url: https://methods.sagepub.com/ book/nonparametric-measures-of-association.
+    
+\item
+    $\left[ 9 \right]$ R.B. Nelsen. Kendall tau metric. eng. Encyclopedia of Mathematics. 2001. isbn: 978-1-55608-010-4.
+    
+\item
+    $\left[ 10 \right]$ Recursive Feature Elimination (RFE). https://www.brainvoyager.com/bv/doc/UsersGuide/MVPA/RecursiveFeatureElimination.html. [Accessed 27 April 2021].
+    
+\item
+    $\left[ 11 \right]$ Kjell Kuhn Max Johnson. Feature Engineering and Selection: A Practical Approach for Predictive Models. eng. Feature Engineering and Selection: A Practical Approach for Predictive Models. 2019. isbn: 9781138079229.
+    
+\item
+    $\left[ 12 \right]$ Feature Analysis Visualizer. Recursive Feature Elimination. https://www.scikit-yb.org/en/latest/api/features/rfecv.html. [Accessed 27 April 2021].
+    
+\item
+    $\left[ 13 \right]$ James Finance. “Machine Learning in Credit Risk Modeling: Efficiency should not come at the expense of Explainability”. In: (July 2017).
+\item
+    $\left[ 14 \right]$ Cyril Goutte and Eric Gaussier. “A probabilistic interpretation of precision, recall and F-score, with implication for evaluation”. In: European Conference on Information Retrieval. Springer. 2005, pp. 345–359.
+    
+\item
+    $\left[ 15 \right]$ Stuart J. Russell and Peter Norvig. Artificial Intelligence: A Modern Approach. eng. Upper Saddle River, New Jersey 07458: Pearson Education, Inc., 2010.
+\item
+    $\left[ 16 \right]$ Tashakkori A, Teddie C. (Eds). The handbook of mixed methods in social and behavioural research, sage. Thousand Oaks, CA; 2003.
+    
+\item
+\noindent    $\left[ 17 \right]$ Michael Bowles. Machine Learning in Python: Essential Techniques for Predictive Analysis. eng. 2015. isbn: 9781118961742.  
+
+\item
+\noindent    $\left[ 18 \right]$ Peter Martey Addo, Dominique Guegan, and Bertrand Hassani. “Credit Risk Analysis Using Machine and Deep Learning Models”. In: Risks 6 (2018).
+
+\end{flushleft}
+\end{enumerate}
+
+\end{document}
